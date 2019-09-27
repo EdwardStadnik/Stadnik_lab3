@@ -118,6 +118,11 @@ def fish(x1, y1, k):
     brushColor('grey')
     circle(x1 + 12.5 * k + 3, y1, 0.5*k)
 
+#def seagul(x0, y0, x2, y2):
+    # x1 = 0.5 * (x0 + x2)
+    # y1 = 0.5 * (y0 + y2)
+
+
 windowSize(500, 600)
 
 penSize(0)
@@ -141,5 +146,7 @@ albatros_suka(40, 350, 5)
 albatros_suka(150, 200, 2)
 
 fish(340, 540, 6)
+
+# seagul()
 
 run()
