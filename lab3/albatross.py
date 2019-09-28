@@ -118,9 +118,45 @@ def fish(x1, y1, k):
     brushColor('grey')
     circle(x1 + 12.5 * k + 3, y1, 0.5*k)
 
-#def seagul(x0, y0, x2, y2):
-    # x1 = 0.5 * (x0 + x2)
-    # y1 = 0.5 * (y0 + y2)
+def seagul(x0, y0, r, alpha, color, n):
+    count = 0
+    penColor(color)
+    alpha0 = alpha * pi / 180
+    alpha = alpha0
+    l = r
+    x1 = x0 + l * cos(alpha)
+    y1 = y0 - l * sin(alpha)
+    points = [[x0, y0], [x1, y1]]
+    for i in range(n):
+        xi = int(x0 + (9 / 10) * l * cos(alpha) - l * sin(alpha) / 10)
+        yi = int(y0 - (9 / 10) * l * sin(alpha) - l * cos(alpha) / 10)
+        points.append([xi, yi])
+        l = l * 82**0.5 / 10
+        alpha += atan(1 / 9)
+        if atan(1 / 9) * i >= pi / 2 :
+            count += 1
+        if count == 2 :
+            number_of_points = i
+            break
+    for i in range(1, number_of_points):
+        pos = points[i]
+        pos1 = points[i + 1]
+        line(pos[0], pos[1], pos1[0], pos1[1])
+    alpha = alpha0
+    l = r
+    x1 = x0 - l * cos(alpha)
+    y1 = y0 + l * sin(alpha)
+    points = [[x0, y0], [x1, y1]]
+    for i in range(number_of_points):
+        xi = int(x0 - (9 / 10) * l * cos(alpha) - l * sin(alpha) / 10)
+        yi = int(y0 + (9 / 10) * l * sin(alpha) - l * cos(alpha) / 10)
+        points.append([xi, yi])
+        l = l * 82 ** 0.5 / 10
+        alpha -= atan(1 / 9)
+    for i in range(1, number_of_points):
+        pos = points[i]
+        pos1 = points[i + 1]
+        line(pos[0], pos[1], pos1[0], pos1[1])
 
 
 windowSize(500, 600)
@@ -147,6 +183,9 @@ albatros_suka(150, 200, 2)
 
 fish(340, 540, 6)
 
-# seagul()
+penSize(2)
+seagul(250, 50, 100, 0, 'white', 100)
+seagul(350, 150, 50, 45, 'white', 100)
+seagul(100, 100, 30, 180, 'white', 100)
 
 run()

@@ -15,7 +15,7 @@ windowSize(500, 600)
 def ellipse_color_gradient():
     ellipse(100, 100, 200, 200, 150,(i,j,k) )
 
-onTimer()
+
 
 
 run()

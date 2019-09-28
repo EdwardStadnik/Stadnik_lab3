@@ -54,9 +54,9 @@ def progressive_animal_painting():
     global new_i
     global new_z
     if new_i < 255:
-        new_i += 1
+        new_i += 10
     if new_z > 0:
-        new_z -= 1
+        new_z -= 10
     animal(k, r, x0, y0, new_i, j, new_z)
 
 
@@ -127,7 +127,7 @@ mountains()
 
 kustik(1.05, 1, 335, 460)
 
-onTimer(progressive_animal_painting, 10)
+onTimer(progressive_animal_painting, 1)
 
 flower(1, 1, 100, 500, 2)
 flower(1, 1, 160, 500, 2)
