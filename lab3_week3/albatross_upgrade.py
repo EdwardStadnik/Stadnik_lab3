@@ -1,5 +1,7 @@
 from graph import*
 from math import*
+from time import*
+
 
 def distance(x1, y1, x2, y2):
     return ((x2-x1)**2 + (y2-y1)**2)**0.5
@@ -139,9 +141,9 @@ def seagul(x0, y0, r, alpha, color, n):
             number_of_points = i
             break
     for i in range(1, number_of_points):
-         pos = points[i]
-         pos1 = points[i + 1]
-         line(pos[0], pos[1], pos1[0], pos1[1])
+        pos = points[i]
+        pos1 = points[i + 1]
+        line(pos[0], pos[1], pos1[0], pos1[1])
     alpha = alpha0
     l = r
     x1 = x0 - l * cos(alpha)
@@ -190,8 +192,54 @@ fish(340, 540, 6)
 
 penSize(2)
 seagul(250, 50, 100, 0, 'white', 100)
-seagul(550, 150, 50, 30, 'white', 100)
-seagul(700, 100, 30, -30, 'white', 100)
 
+
+
+def seagul_delete(x0, y0, r, alpha, color, n):
+    count = 0
+    penColor(color)
+    alpha0 = alpha * pi / 180
+    alpha = alpha0
+    l = r
+    x1 = x0 + l * cos(alpha)
+    y1 = y0 - l * sin(alpha)
+    points = [[x0, y0], [x1, y1]]
+    for i in range(n):
+        xi = int(x0 + (9 / 10) * l * cos(alpha) - l * sin(alpha) / 10)
+        yi = int(y0 - (9 / 10) * l * sin(alpha) - l * cos(alpha) / 10)
+        points.append([xi, yi])
+        l = l * 82**0.5 / 10
+        alpha += atan(1 / 9)
+        if atan(1 / 9) * i >= pi / 2 :
+            count += 1
+        if count == 2 :
+            number_of_points = i
+            break
+    for i in range(1, number_of_points):
+        pos = points[i]
+        pos1 = points[i + 1]
+        line(pos[0], pos[1], pos1[0], pos1[1])
+        link = line(pos[0], pos[1], pos1[0], pos1[1])
+        sleep(1)
+        deleteObject(link)
+    alpha = alpha0
+    l = r
+    x1 = x0 - l * cos(alpha)
+    y1 = y0 + l * sin(alpha)
+    points = [[x0, y0], [x1, y1]]
+    for i in range(number_of_points):
+        xi = int(x0 - (9 / 10) * l * cos(alpha) - l * sin(alpha) / 10)
+        yi = int(y0 + (9 / 10) * l * sin(alpha) - l * cos(alpha) / 10)
+        points.append([xi, yi])
+        l = l * 82 ** 0.5 / 10
+        alpha -= atan(1 / 9)
+    for i in range(1, number_of_points):
+        pos = points[i]
+        pos1 = points[i + 1]
+        line(pos[0], pos[1], pos1[0], pos1[1])
+        link = line(pos[0], pos[1], pos1[0], pos1[1])
+        deleteObject(link)
+
+seagul_delete(550, 150, 50, 30, 'white', 100)
 
 run()
