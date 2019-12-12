@@ -1,6 +1,4 @@
 from tkinter import *
-from math import *
-import array
 from random import *
 
 root = Tk()
@@ -8,21 +6,19 @@ root = Tk()
 c = Canvas(root, width=800, height=800, bg='white')
 c.pack()
 root.geometry('600x800')
-g_0 = 5  # ускорение
 v_0 = 10  # скорость при отскоке от платформы
-Level = 400  # линия, выше которой
+Level = 400  # линия, выше которой не поднимается изображение дудла на экране
 P_Width = 80  # ширина платформы
 P_Height = 5  # толщина платформы
-change = False  # переменная отвечает за тип движения обЪектов
-start = False  # переменная отвечает за начало игры
-pause = False  # переменная отвечает за приостановку игры
-d_x = 0  # перменные, которые помнят информацию про дудла
-d_y = 0
-d_vy = 0
-p_lim = 20  # вероятность появления платформы
+change = False  # переменная отвечает за тип движения объектов (true - платформы, false - дудл)
+start = False  # отвечает за начало игры
+pause = False  # отвечает за приостановку игры
+d_vy = 0  # перменная будет хранить информацию про скорость дудла на время паузы
+g_0 = 0  # будет хранить ускорение на время паузы
+p_lim = 30  # начальная вероятность появления платформы
 
-# функция рисует иконку дудла ПРОБЛЕМА - выдаёт ошибку
-'''
+
+# функция рисует иконку дудла ПРОБЛЕМА - выдаёт ошибку (function doesn't return anything)
 def doodle_draw(x, y):
     c.create_oval(x + 15, y - 35, x + 45, y - 5, fill="blue")
     c.create_rectangle(x, y - 20, x + 60, y, fill="green")
@@ -30,7 +26,6 @@ def doodle_draw(x, y):
     c.create_line(x + 20, y, x + 20, y + 10)
     c.create_line(x + 40, y, x + 40, y + 10)
     c.create_line(x + 60, y, x + 60, y + 10)
-'''
 
 
 # класс дудла
@@ -48,8 +43,8 @@ class Doodle():
             self.max_H = self.y - (self.vy ^ 2) / (2 * self.g)
         else:
             self.max_H = self.y
-        # self.obj = doodle_draw(self.x, self.y)
-        self.obj = c.create_rectangle(self.x, self.y - 20, self.x + 60, self.y, fill="green")
+        self.obj = doodle_draw(self.x, self.y)
+        # self.obj = c.create_rectangle(self.x, self.y - 20, self.x + 60, self.y, fill="green")
 
     def upd(self):
         self.y -= self.vy
@@ -59,7 +54,7 @@ class Doodle():
         if not change:
             c.move(self.obj, 0, -self.vy)
 
-    def MoveLeft(self):
+    def move_left(self):
         if self.x > 800:
             self.x -= self.vx + 800
         elif self.x < 0:
@@ -68,7 +63,7 @@ class Doodle():
             self.x -= self.vx
         c.move(self.obj, - self.vx, 0)
 
-    def MoveRight(self):
+    def move_right(self):
         if self.x > 800:
             self.x += self.vx - 800
         elif self.x < 0:
@@ -120,8 +115,8 @@ class Platform():
 
 # это массив платформ
 platforms = []
-# это массив для скоростей платформ для постановки на паузу
-platforms_data = []
+# это массив скоростей платформ на время паузы - [vx, vy]
+platforms_data = [[0, 0], [1, 1]]
 
 
 # функция,которая гененрирует платформы во время игры
@@ -193,13 +188,18 @@ def start_game():
         game_main()
 
 
-# приостановка игры
+# приостановка и возобновление игры
 def pause_game():
     global start, pause, d_vy, g_0
     if start and pause:
-        pause = False
+        for i in range(0, len(platforms) - 1):
+            platforms[i].vx = platforms_data[i][1]
+            platforms_data[i][2] = platforms[i].vy
+            platforms[i].vx = 0
+            platforms[i].vy = 0
         doodle.vy = d_vy
         doodle.g = g_0
+        pause = False
     elif start and not pause:
         g_0 = doodle.g
         d_vy = doodle.vy
@@ -207,21 +207,27 @@ def pause_game():
         doodle.vy = 0
         doodle.g = 0
         for i in range(0, len(platforms) - 1):
+            platforms_data[i][1] = platforms[i].vx
+            platforms_data[i][2] = platforms[i].vy
             platforms[i].vx = 0
             platforms[i].vy = 0
+        pause = True
 
 
 # выход из игры
 def stop_game():
-    return True
+    global start
+    if start:
+        c.delete(ALL)
+        start = False
 
 
-# основной ход игры
+# основной ход игры ПРОБЛЕМА - не знаю, как реализовать
 def game_main(event=''):
     global start, v_0, g_0, d_vy, d_x, d_y, p_lim, Level
     if start:
-        c.bind('a', doodle.MoveLeft())
-        c.bind('d', doodle.MoveRight())
+        c.bind('a', doodle.move_left())
+        c.bind('d', doodle.move_right())
         while doodle.life:
             Generate_extra_platforms()  # функция, которая генерит платформы
             jump_check(doodle)
@@ -230,6 +236,7 @@ def game_main(event=''):
 
 
 c.bind('<Enter>', start_game)
-root.bind('p', pause_game)
+c.bind('p', pause_game())
+c.bind('<Esc>', stop_game())
 
 mainloop()
