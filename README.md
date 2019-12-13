@@ -5,4 +5,4 @@ hello, i'm andrey
 
 Greetings from Edrward!
 
-gh hello
+gg good bye
